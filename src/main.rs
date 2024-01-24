@@ -9,7 +9,7 @@ use tealr::{
 
 #[async_trait]
 trait Handler {
-    async fn do_the_thing(&self) -> String;
+    async fn get_user_impl(&self, args: GetUserArguments) -> Result<String>;
 }
 
 #[derive(Clone, UserData, ToTypename)]
@@ -17,16 +17,16 @@ struct PluginHandler;
 
 #[async_trait]
 impl Handler for PluginHandler {
-    async fn do_the_thing(&self) -> String {
-        "test".to_owned()
+    async fn get_user_impl(&self, args: GetUserArguments) -> Result<String> {
+        println!("get_user_impl: {}", &args.name);
+        Ok(args.name)
     }
 }
 
 impl tealr::mlu::TealData for PluginHandler {
     fn add_methods<'lua, M: TealDataMethods<'lua, Self>>(methods: &mut M) {
-        methods.add_async_method("get_user", |_, this, arg: GetUserArguments| async move {
-            println!("{}: {}", this.do_the_thing().await, arg.name);
-            Ok("Success")
+        methods.add_async_method("get_user", |_, this, args: GetUserArguments| async move {
+            this.get_user_impl(args).await
         });
         methods.generate_help();
     }
@@ -105,5 +105,6 @@ async fn main() -> Result<()> {
     for cb in plugins.on_get_user.iter() {
         arg = cb.callback.call_async((handler.clone(), arg)).await?;
     }
+    handler.get_user_impl(arg).await?;
     Ok(())
 }
