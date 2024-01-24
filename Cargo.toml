@@ -1,0 +1,25 @@
+[package]
+name = "plugins"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-trait = "0.1.77"
+tealr_derive = "0.9.1"
+
+
+[dependencies.mlua]
+version = "0.9"
+features = ["serialize", "async", "send", "luajit", "vendored", "macros"]
+
+[dependencies.tealr]
+version = "0.9"
+features = ["derive", "compile", "mlua_async", "mlua_send", "mlua_luajit", "mlua_serialize"]
+
+[dependencies.tokio]
+version = "*"
+features = ["macros", "rt"]
+
+[dependencies.serde]
+version = "*"
+features = ["derive"]
