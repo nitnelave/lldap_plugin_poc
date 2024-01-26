@@ -1,13 +1,16 @@
 -- Gets called when the "get_user" function is called.
 local on_get_user = function (api, args)
   -- You can call other functions of the API.
-  api:get_user(args)
+  local users, err = api:get_user(args)
+  if err ~= nil then
+    return nil, err
+  end
   -- You can change the arguments to the function.
   args.name = "modified_name"
   -- Or replace them completely
   args = { name = "bob" }
   -- The returned args will replace the original args.
-  return args
+  return nil, "my error"
 end
 
 return {

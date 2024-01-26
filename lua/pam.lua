@@ -31,11 +31,11 @@ local on_create_user = function (context, args)
 
   -- You can call API functions from inside a listener.
   -- Arguments can have default values.
-  local users = context.api:list_users({})
+  local users, err = context.api:list_users({})
 
-  if type(users) ~= "table" then
+  if err ~= nil then
     -- Error
-    return users
+    return err
   end
 
   for user_and_group in users do
@@ -48,7 +48,7 @@ local on_create_user = function (context, args)
 
   if args.attributes.uidnumber ~= nil then
     if uids[args.attributes.uidnumber] then
-      return "Cannot create user " .. args.user_id .. " with uidNumber " .. args.attributes.uidnumber .. ": uidNumber is already taken"
+      return nil, "Cannot create user " .. args.user_id .. " with uidNumber " .. args.attributes.uidnumber .. ": uidNumber is already taken"
     end
   else
     -- You can change the arguments to the function.
